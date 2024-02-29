@@ -23,7 +23,10 @@ Este paso es importante para llevar el registro de las personas que realizan las
 4. Poner `git init`
 
 ## Agregar archivos
-1. Poner `git add nombre_archivo.extensión`. Nota: Si el nombre del archivo tiene espacios poner el nombre entre comillas.
+1. Poner `git add nombre_archivo.extensión`. 
+
+**Nota**: Si el nombre del archivo tiene espacios poner el nombre entre comillas.
+
 2. Agregar un *commit* con `git commit -m "Agregando mi primer archivo"`
 
 ## Subir archivos a Github
@@ -31,6 +34,8 @@ Este paso es importante para llevar el registro de las personas que realizan las
 2. Poner en la terminal
 
 `git remote add origin https://github.com/nobre_usuario_github/tu_repositorio.git`
+
+**Nota**: si ya se tiene la el git inicializado este paso ya no es necesario.
 
 3. Hacer el Push con
 
