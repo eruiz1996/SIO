@@ -1,10 +1,6 @@
 library(shiny)
 library(shinydashboard)
-
-instituciones <- c('Quálitas', 'AGROASEMEX')
-ramos <- c('Incendio', 'MyT')
-cuentas <- c('Primas', 'Utilidad')
-trimestres <- c('2022-12-31', '2023-01-31')
+library(DT)
 
 # user interface
 ui <- dashboardPage(
@@ -30,34 +26,54 @@ ui <- dashboardPage(
     # body
     dashboardBody(
         tabItems(
-            # Primer Hoja ----------------------------------------------------
+            #################################################################### 
+            # Primer Hoja ------------------------------------------------------
             tabItem(tabName = "sheet1",
-                    fluidRow(
-                        h1("Principales Instituciones del Sector Asegurador"),
+                    titlePanel("Principales Instituciones del Sector Asegurador"),
+                    # Panel lateral
+                    # ----------------------------------------------------------
+                    sidebarLayout(
+                      sidebarPanel(
                         # ---------------------------------------
-                        # Botón 1: cuenta de estado de resultados (1)
+                        # Botón 1: cuentas de estado de resultados (1)
                         selectInput('cuenta1',
                                     "Cuenta de Estado de Resultados: ",
-                                    choices = cuentas,
-                                    selected = cuentas[1],
+                                    choices = cuentas$nombre,
+                                    selected = cuentas$nombre[1],
                                     multiple = F),
                         # ---------------------------------------
                         # Botón 2: trimestre (1)
                         selectInput('trim1',
                                     "Trimestre: ",
-                                    choices = trimestres,
-                                    selected = trimestres[1],
+                                    choices = trimestres$nombre,
+                                    selected = trimestres$nombre[length(trimestres$id)],
                                     multiple = F),
                         # ---------------------------------------
                         # Botón 3: ramo operado (m)
-                        checkboxGroupInput('ramo1',
+                        selectInput('ramo1',
                                     "Ramos Operados: ",
-                                    choices = ramos,
-                                    selected = ramos)
+                                    choices = operaciones$nombre,
+                                    selected = operaciones$nombre[1],
+                                    multiple = T)
                         # ---------------------------------------
+                      ),
+                      # --------------------------------------------------------
+                      
+                      # Panel principal
+                      # --------------------------------------------------------
+                      mainPanel(
+                        tabsetPanel(
+                          tabPanel('Tabla', DT::DTOutput('s1_table')),
+                          tabPanel('Gráfico')
+                        )
+                      )
+                      # --------------------------------------------------------
                     )
             ),
-            # Segunda Hoja ---------------------------------------------------
+            ####################################################################
+            
+            #################################################################### 
+            # Segunda Hoja ------------------------------------------------------
             tabItem(tabName = "sheet2",
                     fluidRow(
                         h1("Análisis por Institución"),
@@ -65,38 +81,48 @@ ui <- dashboardPage(
                         # Botón 1: Institución Aseguradora (1)
                         selectInput('inst2',
                                     "Institución Aseguradora: ",
-                                    choices = instituciones,
-                                    selected = instituciones[1],
+                                    choices = instituciones$nombre,
+                                    selected = instituciones$nombre[1],
                                     multiple = F),
                         # ---------------------------------------
                         # Botón 2: cuenta de estado de resultados (1) 
                         selectInput('cuenta2',
                                            "Cuenta de Estado de Resultados: ",
-                                           choices = cuentas,
-                                           selected = cuentas[1],
+                                           choices = cuentas$nombre,
+                                           selected = cuentas$nombre[1],
                                            multiple = F),
                         # ---------------------------------------
                         # Botón 3: ramos operados (m)
-                        checkboxGroupInput('ramo2',
+                        selectInput('ramo2',
                                     "Ramos Operados: ",
-                                    choices = ramos,
-                                    selected = ramos)
+                                    choices = operaciones$nombre,
+                                    selected = operaciones$nombre[1],
+                                    multiple = T)
                         # ---------------------------------------
                     )
             ),
-            # Hoja concentración 1 -------------------------------------------
+            ####################################################################
+            
+            #################################################################### 
+            # Hoja concentración 1 ---------------------------------------------
             tabItem(tabName = "subitem1",
                     fluidRow(
                         h1("Institución vs Institución")
                     )
             ),
-            # Hoja concentración 2 -------------------------------------------
+            ####################################################################
+            
+            ####################################################################
+            # Hoja concentración 2 ---------------------------------------------
             tabItem(tabName = "subitem2",
                     fluidRow(
                         h1("Institución vs Sector Asegurador")
                     )
             ),
-            # Tercer Hoja ----------------------------------------------------
+            ####################################################################
+            
+            #################################################################### 
+            # Tercer Hoja ------------------------------------------------------
             tabItem(tabName = "sheet3",
                     fluidRow(
                         h1("Análisis de Concentración"),
@@ -104,33 +130,34 @@ ui <- dashboardPage(
                         # Botón 1: Institución Aseguradora (1)
                         selectInput('inst3',
                                     "Institución Aseguradora: ",
-                                    choices = instituciones,
-                                    selected = instituciones[1],
+                                    choices = instituciones$nombre,
+                                    selected = instituciones$nombre[1],
                                     multiple = F),
                         # ---------------------------------------
                         # Botón 2: Ramo Operado (1)
                         selectInput('ramo3',
                                     "Ramo Operado: ",
-                                    choices = ramos,
-                                    selected = ramos[1],
+                                    choices = operaciones$nombre,
+                                    selected = operaciones$nombre[1],
                                     multiple = F),
                         # ---------------------------------------
                         # Botón 3: Trimestre (1)
                         selectInput('trim3',
                                     "Trimestre: ",
-                                    choices = trimestres,
-                                    selected = trimestres[1],
+                                    choices = trimestres$nombre,
+                                    selected = trimestres$nombre[length(trimestres$id)],
                                     multiple = F),
                         # ---------------------------------------
                         # Botón 4: Trimestre (1)
                         selectInput('trim3_com',
                                     "Trimestre de comparativa: ",
-                                    choices = trimestres,
-                                    selected = trimestres[1],
+                                    choices = trimestres$nombre,
+                                    selected = trimestres$nombre[length(trimestres$id)],
                                     multiple = F),
                         # ---------------------------------------
                     )
             )
+            ####################################################################
         )
     ),
     skin='green'
