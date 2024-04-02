@@ -16,6 +16,7 @@ Este paso es importante para llevar el registro de las personas que realizan las
 `git config --global user.email "tucorreo@gmail.com"`
 
 ## Inicializar un repositorio
+Este paso sólo se realiza una vez por repositorio local.
 1. Abrir la consola
 2. Ir a la carpeta donde se tengan los archivos que se quieren subir.
 3. Copiar el directorio, a la que llamaremos `mi_dir`
@@ -27,16 +28,35 @@ Este paso es importante para llevar el registro de las personas que realizan las
 
 **Nota**: Si el nombre del archivo tiene espacios poner el nombre entre comillas.
 
+Ejemplo: `git add "nombre archivo espacios.extensión"`
+
 2. Agregar un *commit* con `git commit -m "Agregando mi primer archivo"`
 
 ## Subir archivos a Github
 1. Crear un nuevo repositorio y copiar la url.
 2. Poner en la terminal
 
-`git remote add origin https://github.com/nobre_usuario_github/tu_repositorio.git`
+`git remote add origin https://github.com/nombre_usuario_github/tu_repositorio.git`
 
 **Nota**: si ya se tiene la el git inicializado este paso ya no es necesario.
 
 3. Hacer el Push con
 
 `git push -u origin master`
+
+---
+
+# Clonar un repositorio
+1. Elegir el directorio deseado para clonar el repositorio (tener en cuenta que se copia toda el repositorio como una carpeta)
+2. Usar el comando de clonar:
+
+`git clone https://github.com/nombre_usuario_github/tu_repositorio.git`
+
+---
+
+# Actualizar un repositorio local
+Cuando se trabaja desde dos o más repositorios locales, lo que significa que ya se clonó el repositorio en varios equipos, y sólo se desea actualizar los cambios (inclusión de archivos o actualización de ya existentes), se tiene que usar el comando:
+
+`git pull origin master`
+
+Esto suponiendo que se actualiza la rama principal.
