@@ -60,3 +60,12 @@ Cuando se trabaja desde dos o más repositorios locales, lo que significa que ya
 `git pull origin master`
 
 Esto suponiendo que se actualiza la rama principal.
+
+---
+
+# Renombrar un archivo
+1. Ir al directorio local
+2. Usar `mv` para renombrar: `git mv old_file_name new_file_name`
+3. Añadir el nuevo archivo: `git add new_file_name`
+4. Hacer el commit: `git commit -m "Rename file: old_file_name to new_file_name"`
+5. Hacer el push: `git push`
