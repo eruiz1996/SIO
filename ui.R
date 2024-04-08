@@ -73,10 +73,12 @@ ui <- dashboardPage(
             ####################################################################
             
             #################################################################### 
-            # Segunda Hoja ------------------------------------------------------
+            # Segunda Hoja -----------------------------------------------------
             tabItem(tabName = "sheet2",
                     titlePanel("Análisis por Institución"),
                     sidebarLayout(
+                      # Panel lateral
+                      # --------------------------------------------------------
                       sidebarPanel(
                         # ---------------------------------------
                         # Botón 1: Institución Aseguradora (1)
@@ -101,12 +103,17 @@ ui <- dashboardPage(
                                     multiple = T)
                         # ---------------------------------------
                         ),
+                      # --------------------------------------------------------
+                      
+                      # Panel principal
+                      # --------------------------------------------------------
                       mainPanel(
                         h1("Gráfico de tendencia"),
                         plotOutput('s2_graphic1'),
                         h1("Gráfico de Embudo"),
                         plotlyOutput('s2_graphic2')
                         )
+                      # --------------------------------------------------------
                       )
             ),
             ####################################################################
@@ -132,8 +139,13 @@ ui <- dashboardPage(
             #################################################################### 
             # Tercer Hoja ------------------------------------------------------
             tabItem(tabName = "sheet3",
-                    fluidRow(
-                        h1("Análisis de Concentración"),
+                    titlePanel("Análisis de Concentración"),
+                    # Panel lateral
+                    # ----------------------------------------------------------
+                    sidebarLayout(
+                      # Panel lateral
+                      # --------------------------------------------------------
+                      sidebarPanel(
                         # ---------------------------------------
                         # Botón 1: Institución Aseguradora (1)
                         selectInput('inst3',
@@ -160,9 +172,22 @@ ui <- dashboardPage(
                         selectInput('trim3_com',
                                     "Trimestre de comparativa: ",
                                     choices = trimestres$nombre,
-                                    selected = trimestres$nombre[length(trimestres$id)],
+                                    selected = trimestres$nombre[length(trimestres$id)-1],
                                     multiple = F),
                         # ---------------------------------------
+                        ),
+                      # --------------------------------------------------------
+                      
+                      # Panel principal
+                      # --------------------------------------------------------
+                      mainPanel(
+                        h1("Concentración por ramo operado"),
+                        navbarPage(title='Comparativa trimestral',
+                          tabPanel('Circular', plotOutput('s3_graphic1')),
+                          tabPanel('Barras', plotOutput('s3_graphic2'))
+                        )
+                      )
+                      # --------------------------------------------------------
                     )
             )
             ####################################################################

@@ -116,10 +116,47 @@ server <- function(input, output, session) {
   
   ##############################################################################
   # sheet3
-  s3.trim <- reactive({input$trim3})
-  s3.cuenta <- reactive({input$cuenta2})
-  s3.ramo <- reactive({input$ramo3})
+  # variables reactivas
+  #-----------------------------------------------------------------------------
   s3.inst <- reactive({input$inst3})
+  s3.trim <- reactive({ymd(input$trim3)})
+  s3.trim.c <- reactive({ymd(input$trim3_com)})
+  s3.ramo <- reactive({input$ramo3})
+  #-----------------------------------------------------------------------------
+  # gráfico cirular
+  output$s3_graphic1 <- renderPlot({
+    filter_df <- df %>% 
+      # filtramos
+      filter(institucion == s3.inst(),
+             operacion == s3.ramo(),
+             trimestre %in% c(s3.trim(), s3.trim.c())) %>%
+      select(trimestre, importe) %>% 
+      # agrupamos por trimestre
+      group_by(trimestre) %>% 
+      summarise(importe = sum(importe))
+    # gráfico circular
+    ggplot(filter_df, aes(x = "", y = importe, fill = trimestre)) +
+      geom_bar(stat = "identity", width = 1) +
+      coord_polar(theta = "y")
+  })
+  #-----------------------------------------------------------------------------
+  # gráfico barras
+  output$s3_graphic2 <- renderPlot({
+    filter_df <- df %>% 
+      # filtramos
+      filter(institucion == s3.inst(),
+             trimestre %in% c(s3.trim(), s3.trim.c()),
+             operacion == s3.ramo()) %>%
+      select(trimestre, importe) %>% 
+      # agrupamos por trimestre
+      group_by(trimestre) %>% 
+      summarise(importe = sum(importe))
+    # gráfico de barras
+    ggplot(filter_df, aes(x = trimestre, y = importe)) +
+      geom_bar(stat='identity', fill = "skyblue") +
+      labs(x = "Trimestre", y = "Importe")
+  })
+  #-----------------------------------------------------------------------------
   ##############################################################################
 
 }
