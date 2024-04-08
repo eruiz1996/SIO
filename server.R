@@ -3,6 +3,7 @@ library(dplyr)
 library(lubridate)
 library(scales)
 library(ggplot2)
+library(plotly)
 
 # server
 server <- function(input, output, session) {
@@ -64,9 +65,52 @@ server <- function(input, output, session) {
   
   ##############################################################################
   # sheet2
+  # variables reactivas
+  #-----------------------------------------------------------------------------
   s2.cuenta <- reactive({input$cuenta2})
   s2.ramo <- reactive({input$ramo2})
   s2.inst <- reactive({input$inst2})
+  #-----------------------------------------------------------------------------
+  # gráfica de tendencia
+  #-----------------------------------------------------------------------------
+  output$s2_graphic1 <- renderPlot({
+    filter_df <- df %>% 
+      # filtramos
+      filter(institucion == s2.inst(),
+             cuenta == s2.cuenta(),
+             operacion %in% s2.ramo()) %>%
+      select(trimestre, importe) %>% 
+      # agrupamos por trimestre
+      group_by(trimestre) %>% 
+      summarise(importe = sum(importe))
+    # Gráfico de tendencia
+    ggplot(filter_df, aes(x = trimestre, y = importe)) +
+      geom_line(color = 'green') +
+      labs(x = "Trimestre", y = "Importe")
+  })
+  # gráfica de embudo
+  #-----------------------------------------------------------------------------
+  output$s2_graphic2 <- renderPlotly({
+    filter_df <- df %>% 
+      # filtramos
+      filter(institucion == s2.inst(),
+             cuenta == s2.cuenta(),
+             operacion %in% s2.ramo()) %>%
+      select(trimestre, importe) %>% 
+      # agrupamos por trimestre
+      group_by(trimestre) %>% 
+      summarise(importe = sum(importe))
+    # gráfico de embudo
+    fig <- plot_ly()
+    fig <- fig %>%
+      add_trace(
+        type = "funnel",
+        y = filter_df$trimestre,
+        x = filter_df$importe)
+    fig <- fig %>%
+      layout(yaxis = list(categoryarray = filter_df$trimestre))
+    fig
+  })
   ##############################################################################
   
   
