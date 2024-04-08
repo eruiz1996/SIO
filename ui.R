@@ -75,8 +75,9 @@ ui <- dashboardPage(
             #################################################################### 
             # Segunda Hoja ------------------------------------------------------
             tabItem(tabName = "sheet2",
-                    fluidRow(
-                        h1("Análisis por Institución"),
+                    titlePanel("Análisis por Institución"),
+                    sidebarLayout(
+                      sidebarPanel(
                         # ---------------------------------------
                         # Botón 1: Institución Aseguradora (1)
                         selectInput('inst2',
@@ -99,7 +100,14 @@ ui <- dashboardPage(
                                     selected = operaciones$nombre[1],
                                     multiple = T)
                         # ---------------------------------------
-                    )
+                        ),
+                      mainPanel(
+                        h1("Gráfico de tendencia"),
+                        plotOutput('s2_graphic1'),
+                        h1("Gráfico de Embudo"),
+                        plotlyOutput('s2_graphic2')
+                        )
+                      )
             ),
             ####################################################################
             
