@@ -13,7 +13,7 @@ ui <- dashboardPage(
     # sidebar
     dashboardSidebar(
         sidebarMenu(
-            menuItem("Top 5", tabName = "sheet1", icon = icon("chart-bar")),
+            menuItem("Top 10", tabName = "sheet1", icon = icon("chart-bar")),
             menuItem("Por institución", tabName = "sheet2", icon = icon("line-chart")),
             menuItem("Comparativa",
                      menuSubItem("Institución", tabName = "subitem1"),
@@ -64,7 +64,7 @@ ui <- dashboardPage(
                       mainPanel(
                         tabsetPanel(
                           tabPanel('Tabla', DT::DTOutput('s1_table')),
-                          tabPanel('Gráfico')
+                          tabPanel('Gráfico', plotOutput("s1_graphic"))
                         )
                       )
                       # --------------------------------------------------------
