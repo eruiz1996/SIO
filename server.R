@@ -1,10 +1,3 @@
-library(shiny)
-library(dplyr)
-library(lubridate)
-library(scales)
-library(ggplot2)
-library(plotly)
-
 # server
 server <- function(input, output, session) {
   ##############################################################################
@@ -113,6 +106,56 @@ server <- function(input, output, session) {
   })
   ##############################################################################
   
+  ##############################################################################
+  # subitem1
+  # variables reactivas
+  sb1.inst <- reactive({input$inst_cs})
+  sb1.cuenta <- reactive({input$cuenta_cs})
+  sb1.ramo <- reactive({input$ramo_cs})
+  sb1.trim <- reactive({ymd(input$per_cs)})
+  #-----------------------------------------------------------------------------
+  # tabla
+  #-----------------------------------------------------------------------------
+  output$sb1_table <- DT::renderDT({
+    filter_df <- df %>% 
+      # filtramos
+      filter(trimestre >= sb1.trim()[1],
+             trimestre <= sb1.trim()[2],
+             cuenta == sb1.cuenta(),
+             operacion %in% sb1.ramo(),
+             institucion == sb1.inst()) %>% 
+      # seleccionamos columnas
+      select(trimestre, importe) %>%
+      # agrupamos por institución
+      group_by(trimestre) %>% 
+      summarise(importe = sum(importe))
+    
+    return(filter_df)
+  })
+  #-----------------------------------------------------------------------------
+  # gráfica de barras
+  #-----------------------------------------------------------------------------
+  output$sb1_graphic <- renderPlot({
+    filter_df <- df %>% 
+      # filtramos
+      filter(trimestre >= sb1.trim()[1],
+             trimestre <= sb1.trim()[2],
+             cuenta == sb1.cuenta(),
+             operacion %in% sb1.ramo(),
+             institucion == sb1.inst()) %>% 
+      # seleccionamos columnas
+      select(trimestre, importe) %>%
+      # agrupamos por institución
+      group_by(trimestre) %>% 
+      summarise(importe = sum(importe))
+    
+    # Gráfico de barras
+    ggplot(filter_df, aes(x = trimestre, y = importe)) +
+      geom_bar(stat='identity', fill = "skyblue") +
+      labs(x = "Trimestre", y = "Importe") +
+      # media móvil
+      geom_smooth(method = "loess", formula = y~x, se = FALSE, color = "#56242A")
+  })
   
   ##############################################################################
   # sheet3
@@ -135,9 +178,7 @@ server <- function(input, output, session) {
       group_by(trimestre) %>% 
       summarise(importe = sum(importe))
     # gráfico circular
-    ggplot(filter_df, aes(x = "", y = importe, fill = trimestre)) +
-      geom_bar(stat = "identity", width = 1) +
-      coord_polar(theta = "y")
+    pie(filter_df$importe, labels = filter_df$trimestre)
   })
   #-----------------------------------------------------------------------------
   # gráfico barras

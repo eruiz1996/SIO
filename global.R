@@ -1,6 +1,19 @@
+# lectura de archivos Excel
 library(readxl)
+# manipulación de bases de datos
 library(dplyr)
+# manejo de fechas
 library(lubridate)
+# creación del dashboard
+library(shiny)
+library(shinydashboard)
+library(shinyWidgets)
+# creación de tablas interactivas
+library(DT)
+# gráficos
+library(ggplot2)
+library(plotly)
+
 
 read_dir <- 'C:/Users/ed_22/Documents/SIO/Procesados'
 

@@ -1,7 +1,3 @@
-library(shiny)
-library(shinydashboard)
-library(DT)
-
 # user interface
 ui <- dashboardPage(
     # header
@@ -16,8 +12,8 @@ ui <- dashboardPage(
             menuItem("Top 10", tabName = "sheet1", icon = icon("chart-bar")),
             menuItem("Por institución", tabName = "sheet2", icon = icon("line-chart")),
             menuItem("Comparativa",
-                     menuSubItem("Institución", tabName = "subitem1"),
-                     menuSubItem("Sector Asegurador", tabName = "subitem2"),
+                     menuSubItem("Sector Asegurador", tabName = "subitem1"),
+                     menuSubItem("Institución", tabName = "subitem2"),
                      icon = icon("list")),
             menuItem("Concentración", tabName = "sheet3", icon = icon("pie-chart"))
         )
@@ -121,8 +117,49 @@ ui <- dashboardPage(
             #################################################################### 
             # Hoja concentración 1 ---------------------------------------------
             tabItem(tabName = "subitem1",
-                    fluidRow(
-                        h1("Institución vs Institución")
+                    titlePanel("Institución vs Sector"),
+                    sidebarLayout(
+                      # Panel lateral
+                      # --------------------------------------------------------
+                      sidebarPanel(
+                        # ---------------------------------------
+                        # Botón 1: Institución Aseguradora (1)
+                        selectInput('inst_cs',
+                                    "Institución Aseguradora: ",
+                                    choices = instituciones$nombre,
+                                    selected = instituciones$nombre[1],
+                                    multiple = F),
+                        # ---------------------------------------
+                        # Botón 2: cuenta de estado de resultados (1) 
+                        selectInput('cuenta_cs',
+                                    "Cuenta de Estado de Resultados: ",
+                                    choices = cuentas$nombre,
+                                    selected = cuentas$nombre[1],
+                                    multiple = F),
+                        # ---------------------------------------
+                        # Botón 3: ramos operados (m)
+                        selectInput('ramo_cs',
+                                    "Ramos Operados: ",
+                                    choices = operaciones$nombre,
+                                    selected = operaciones$nombre[1],
+                                    multiple = T),
+                        # ---------------------------------------
+                        # Botón 4: rango de fechas
+                        sliderTextInput('per_cs',
+                                    'Rango de fechas: ',
+                                    choices = trimestres$nombre,
+                                    selected = c(min(trimestres$nombre),max(trimestres$nombre))
+                                    )
+                        # ---------------------------------------
+                      # --------------------------------------------------------
+                      ),
+                      # Panel principal
+                      # --------------------------------------------------------
+                      mainPanel(
+                        plotOutput('sb1_graphic'),
+                        DT::DTOutput('sb1_table')
+                      )
+                      # --------------------------------------------------------
                     )
             ),
             ####################################################################
@@ -130,8 +167,55 @@ ui <- dashboardPage(
             ####################################################################
             # Hoja concentración 2 ---------------------------------------------
             tabItem(tabName = "subitem2",
-                    fluidRow(
-                        h1("Institución vs Sector Asegurador")
+                    titlePanel("Institución vs Institución"),
+                    sidebarLayout(
+                      # Panel lateral
+                      # --------------------------------------------------------
+                      sidebarPanel(
+                        # ---------------------------------------
+                        # Botón 1: Institución Aseguradora (1)
+                        selectInput('inst1_ci',
+                                    "Institución Aseguradora: ",
+                                    choices = instituciones$nombre,
+                                    selected = instituciones$nombre[1],
+                                    multiple = F),
+                        # ---------------------------------------
+                        # Botón 2: Segunda Institución Aseguradora (1)
+                        selectInput('inst2_ci',
+                                    "Institución Aseguradora: ",
+                                    choices = instituciones$nombre,
+                                    selected = instituciones$nombre[2],
+                                    multiple = F),
+                        # ---------------------------------------
+                        # Botón 3: cuenta de estado de resultados (1) 
+                        selectInput('cuenta_ci',
+                                    "Cuenta de Estado de Resultados: ",
+                                    choices = cuentas$nombre,
+                                    selected = cuentas$nombre[1],
+                                    multiple = F),
+                        # ---------------------------------------
+                        # Botón 4: ramos operados (m)
+                        selectInput('ramo_ci',
+                                    "Ramos Operados: ",
+                                    choices = operaciones$nombre,
+                                    selected = operaciones$nombre[1],
+                                    multiple = T),
+                        # ---------------------------------------
+                        # Botón 5: rango de fechas
+                        sliderTextInput('per_ci',
+                                        'Rango de fechas: ',
+                                        choices = trimestres$nombre,
+                                        selected = c(min(trimestres$nombre),max(trimestres$nombre))
+                        )
+                        # ---------------------------------------
+                        # --------------------------------------------------------
+                      ),
+                      # Panel principal
+                      # --------------------------------------------------------
+                      mainPanel(
+                        
+                      )
+                      # --------------------------------------------------------
                     )
             ),
             ####################################################################
