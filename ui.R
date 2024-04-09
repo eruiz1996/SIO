@@ -213,7 +213,8 @@ ui <- dashboardPage(
                       # Panel principal
                       # --------------------------------------------------------
                       mainPanel(
-                        
+                        plotOutput('sb2_graphic'),
+                        DT::DTOutput('sb2_table')
                       )
                       # --------------------------------------------------------
                     )

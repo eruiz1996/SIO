@@ -202,6 +202,104 @@ server <- function(input, output, session) {
   ##############################################################################
   
   ##############################################################################
+  # subitem2
+  # variables reactivas
+  sb2.inst1 <- reactive({input$inst1_ci})
+  sb2.inst2 <- reactive({input$inst2_ci})
+  sb2.cuenta <- reactive({input$cuenta_ci})
+  sb2.ramo <- reactive({input$ramo_ci})
+  sb2.trim <- reactive({ymd(input$per_ci)})
+  #-----------------------------------------------------------------------------
+  # tabla
+  #-----------------------------------------------------------------------------
+  output$sb2_table <- DT::renderDT({
+    filter_df_inst1 <- df %>% 
+      # filtramos
+      filter(trimestre >= sb2.trim()[1],
+             trimestre <= sb2.trim()[2],
+             cuenta == sb2.cuenta(),
+             operacion %in% sb2.ramo(),
+             institucion == sb2.inst1()) %>% 
+      # seleccionamos columnas
+      select(trimestre, importe) %>%
+      # agrupamos por institución
+      group_by(trimestre) %>% 
+      summarise(institucion1 = sum(importe)) %>% 
+      select(trimestre,institucion1)
+    # sector asegurador
+    filter_df_inst2 <- df %>% 
+      # filtramos
+      filter(trimestre >= sb2.trim()[1],
+             trimestre <= sb2.trim()[2],
+             cuenta == sb2.cuenta(),
+             operacion %in% sb1.ramo(),
+             institucion == sb2.inst2()) %>% 
+      # seleccionamos columnas
+      select(trimestre, importe) %>%
+      # agrupamos por institución
+      group_by(trimestre) %>% 
+      summarise(institucion2 = sum(importe)) %>% 
+      select(trimestre, institucion2)
+    # unimos los dataframes
+    filter_df <- merge(filter_df_inst1, filter_df_inst2, all.x = T)  %>% 
+      select(trimestre, institucion1, institucion2)
+    
+    return(filter_df)
+  })
+  #-----------------------------------------------------------------------------
+  # gráfica de barras
+  #-----------------------------------------------------------------------------
+  output$sb2_graphic <- renderPlot({
+    # institución---
+    filter_df_inst1 <- df %>% 
+      # filtramos
+      filter(trimestre >= sb2.trim()[1],
+             trimestre <= sb2.trim()[2],
+             cuenta == sb2.cuenta(),
+             operacion %in% sb2.ramo(),
+             institucion == sb2.inst1()) %>% 
+      # seleccionamos columnas
+      select(trimestre, importe) %>%
+      # agrupamos por institución
+      group_by(trimestre) %>% 
+      summarise(institucion1 = sum(importe)) %>% 
+      select(trimestre,institucion1)
+    # sector asegurador
+    filter_df_inst2 <- df %>% 
+      # filtramos
+      filter(trimestre >= sb2.trim()[1],
+             trimestre <= sb2.trim()[2],
+             cuenta == sb2.cuenta(),
+             operacion %in% sb1.ramo(),
+             institucion == sb2.inst2()) %>% 
+      # seleccionamos columnas
+      select(trimestre, importe) %>%
+      # agrupamos por institución
+      group_by(trimestre) %>% 
+      summarise(institucion2 = sum(importe)) %>% 
+      select(trimestre, institucion2)
+    # unimos los dataframes
+    filter_df <- merge(filter_df_inst1, filter_df_inst2, all.x = T)  %>% 
+      select(trimestre, institucion1, institucion2)
+    
+    # pasamos a formato largo
+    df_long <- pivot_longer(filter_df, cols = c(institucion1, institucion2), 
+                            names_to = "variable", values_to = "importe")
+    
+    # Graficamos ambas variables en un mismo gráfico con barras agrupadas
+    ggplot(df_long, aes(x = trimestre, y = importe, fill = variable)) +
+      geom_bar(stat = "identity", position = position_dodge()) +
+      labs(title = "Comparativo trimestral",  # Título del gráfico
+           x = "Trimestre",  # Etiqueta del eje x
+           y = "Importe",  # Etiqueta del eje y
+           fill = "Variable") +  # Leyenda de las variables
+      theme_minimal() +  # Tema del gráfico
+      scale_fill_manual(values = c("blue", "red")) 
+    
+  })
+  ##############################################################################
+  
+  ##############################################################################
   # sheet3
   # variables reactivas
   #-----------------------------------------------------------------------------
