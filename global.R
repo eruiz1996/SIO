@@ -2,6 +2,8 @@
 library(readxl)
 # manipulación de bases de datos
 library(dplyr)
+library(scales)
+library(tidyr)
 # manejo de fechas
 library(lubridate)
 # creación del dashboard
