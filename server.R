@@ -117,7 +117,7 @@ server <- function(input, output, session) {
   # tabla
   #-----------------------------------------------------------------------------
   output$sb1_table <- DT::renderDT({
-    filter_df <- df %>% 
+    filter_df_inst <- df %>% 
       # filtramos
       filter(trimestre >= sb1.trim()[1],
              trimestre <= sb1.trim()[2],
@@ -128,7 +128,24 @@ server <- function(input, output, session) {
       select(trimestre, importe) %>%
       # agrupamos por institución
       group_by(trimestre) %>% 
-      summarise(importe = sum(importe))
+      summarise(importe_institucion = sum(importe)) %>% 
+      select(trimestre,importe_institucion)
+    # sector asegurador
+    filter_df_sec <- df %>% 
+      # filtramos
+      filter(trimestre >= sb1.trim()[1],
+             trimestre <= sb1.trim()[2],
+             cuenta == sb1.cuenta(),
+             operacion %in% sb1.ramo()) %>% 
+      # seleccionamos columnas
+      select(trimestre, importe) %>%
+      # agrupamos por institución
+      group_by(trimestre) %>% 
+      summarise(importe_sector = sum(importe)) %>% 
+      select(trimestre, importe_sector)
+    # unimos los dataframes
+    filter_df <- merge(filter_df_sec, filter_df_inst, all.x = T)  %>% 
+      select(trimestre, importe_sector, importe_institucion)
     
     return(filter_df)
   })
@@ -136,7 +153,8 @@ server <- function(input, output, session) {
   # gráfica de barras
   #-----------------------------------------------------------------------------
   output$sb1_graphic <- renderPlot({
-    filter_df <- df %>% 
+    # institución---
+    filter_df_inst <- df %>% 
       # filtramos
       filter(trimestre >= sb1.trim()[1],
              trimestre <= sb1.trim()[2],
@@ -147,15 +165,41 @@ server <- function(input, output, session) {
       select(trimestre, importe) %>%
       # agrupamos por institución
       group_by(trimestre) %>% 
-      summarise(importe = sum(importe))
+      summarise(importe_institucion = sum(importe)) %>% 
+      select(trimestre,importe_institucion)
+    # sector asegurador---
+    filter_df_sec <- df %>% 
+      # filtramos
+      filter(trimestre >= sb1.trim()[1],
+             trimestre <= sb1.trim()[2],
+             cuenta == sb1.cuenta(),
+             operacion %in% sb1.ramo()) %>% 
+      # seleccionamos columnas
+      select(trimestre, importe) %>%
+      # agrupamos por institución
+      group_by(trimestre) %>% 
+      summarise(importe_sector = sum(importe)) %>% 
+      select(trimestre, importe_sector)
+    # unimos los dataframes---
+    filter_df <- merge(filter_df_sec, filter_df_inst, all.x = T)  %>% 
+      select(trimestre, importe_sector, importe_institucion)
     
-    # Gráfico de barras
-    ggplot(filter_df, aes(x = trimestre, y = importe)) +
-      geom_bar(stat='identity', fill = "skyblue") +
-      labs(x = "Trimestre", y = "Importe") +
-      # media móvil
-      geom_smooth(method = "loess", formula = y~x, se = FALSE, color = "#56242A")
+    # pasamos a formato largo
+    df_long <- pivot_longer(filter_df, cols = c(importe_sector, importe_institucion), 
+                            names_to = "variable", values_to = "importe")
+    
+    # Graficamos ambas variables en un mismo gráfico con barras agrupadas
+    ggplot(df_long, aes(x = trimestre, y = importe, fill = variable)) +
+      geom_bar(stat = "identity", position = position_dodge()) +
+      labs(title = "Comparativo trimestral",  # Título del gráfico
+           x = "Trimestre",  # Etiqueta del eje x
+           y = "Importe",  # Etiqueta del eje y
+           fill = "Variable") +  # Leyenda de las variables
+      theme_minimal() +  # Tema del gráfico
+      scale_fill_manual(values = c("blue", "red")) 
+    
   })
+  ##############################################################################
   
   ##############################################################################
   # sheet3
