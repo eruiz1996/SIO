@@ -48,7 +48,7 @@ server <- function(input, output, session) {
     
     # Gráfico de barras
     ggplot(filter_df, aes(x = reorder(institucion, -importe), y = importe)) +
-      geom_bar(stat='identity', fill = "skyblue") +
+      geom_bar(stat='identity', fill = "#4B0082") +
       labs(title = "Top 10 de Compañías", x = "Instituciones", y = "Importe") +
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
   })
@@ -78,7 +78,7 @@ server <- function(input, output, session) {
       summarise(importe = sum(importe))
     # Gráfico de tendencia
     ggplot(filter_df, aes(x = trimestre, y = importe)) +
-      geom_line(color = 'green') +
+      geom_line(color = '#E32636') +
       labs(x = "Trimestre", y = "Importe")
   })
   # gráfica de embudo
@@ -93,13 +93,16 @@ server <- function(input, output, session) {
       # agrupamos por trimestre
       group_by(trimestre) %>% 
       summarise(importe = sum(importe))
+    # color
+    color <- "#8A2BE2"
     # gráfico de embudo
     fig <- plot_ly()
     fig <- fig %>%
       add_trace(
         type = "funnel",
         y = filter_df$trimestre,
-        x = filter_df$importe)
+        x = filter_df$importe,
+        marker = list(color = color))
     fig <- fig %>%
       layout(yaxis = list(categoryarray = filter_df$trimestre))
     fig
@@ -196,7 +199,7 @@ server <- function(input, output, session) {
            y = "Importe",  # Etiqueta del eje y
            fill = "Variable") +  # Leyenda de las variables
       theme_minimal() +  # Tema del gráfico
-      scale_fill_manual(values = c("blue", "red")) 
+      scale_fill_manual(values = c("#ADD8E6", "#808080")) 
     
   })
   ##############################################################################
@@ -294,7 +297,7 @@ server <- function(input, output, session) {
            y = "Importe",  # Etiqueta del eje y
            fill = "Variable") +  # Leyenda de las variables
       theme_minimal() +  # Tema del gráfico
-      scale_fill_manual(values = c("blue", "red")) 
+      scale_fill_manual(values = c("#9370DB", "#ADFF2F")) 
     
   })
   ##############################################################################
@@ -320,7 +323,7 @@ server <- function(input, output, session) {
       group_by(trimestre) %>% 
       summarise(importe = sum(importe))
     # gráfico circular
-    pie(filter_df$importe, labels = filter_df$trimestre)
+    pie(filter_df$importe, labels = filter_df$trimestre, col = c("#8B0000", "#40E0D0"))
   })
   #-----------------------------------------------------------------------------
   # gráfico barras
@@ -336,7 +339,7 @@ server <- function(input, output, session) {
       summarise(importe = sum(importe))
     # gráfico de barras
     ggplot(filter_df, aes(x = trimestre, y = importe)) +
-      geom_bar(stat='identity', fill = "skyblue") +
+      geom_bar(stat='identity', fill = "#FFC0CB") +
       labs(x = "Trimestre", y = "Importe")
   })
   #-----------------------------------------------------------------------------
